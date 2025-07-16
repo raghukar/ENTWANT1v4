@@ -1,0 +1,72 @@
+host_custom_structured_router_bgp:
+  neighbors:
+
+load_interval:
+  default: 5
+
+host_custom_structured_eos_cli: |-
+  no interface Loopback0
+  !
+  no router bgp 1000
+  !
+  no ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+  !
+  no route-map RM-CONN-2-BGP
+  !
+  no spanning-tree vlan-id 601,901
+  !
+  vlan 101
+    name SVC1-VPWS-SINGLE-2
+  !
+  vlan 501
+    name SVC4-L2VPN
+  !
+  vlan 601
+    name SVC6
+  !
+  vlan 901
+    name SVC9
+  !
+  vlan 902
+  !
+  vlan 1101
+    name SVC10-GATEWAY
+  !
+  interface Ethernet1
+    description host3
+    switchport trunk allowed vlan 101,501,601,901-902,1101
+    switchport mode trunk
+  !
+  interface Ethernet2
+    description PE6
+    switchport trunk allowed vlan 101,501,601,901-902,1101
+    switchport mode trunk
+  !
+  interface Ethernet5
+    description PE5
+    switchport trunk allowed vlan 101,501,601,901,1101
+    switchport mode trunk
+  !
+  interface Vlan601
+  !
+  interface Vlan901
+    ip address 192.168.9.10/24
+  !
+  interface Vlan902
+    no autostate
+    ip address 192.168.92.10/24
+  !
+  router bgp 1000
+    maximum-paths 2
+    bgp additional-paths install ecmp-primary
+    neighbor 192.168.9.1 remote-as 65000
+    neighbor 192.168.9.1 bfd
+    neighbor 192.168.9.1 maximum-routes 0
+    neighbor 192.168.92.1 remote-as 65000
+    neighbor 192.168.92.1 bfd
+    neighbor 192.168.92.1 maximum-routes 0
+    redistribute connected
+    address-family ipv4
+      neighbor 192.168.9.1 activate
+      neighbor 192.168.92.1 activate
+  !

@@ -1,0 +1,98 @@
+---
+
+# WAN Fabric Settings
+
+fabric_name: WAN
+use_anta: true
+deploy_to_cv_accept_preview: true
+deploy_to_cv_inventory_host: cloudvision
+
+custom_structured_configuration_prefix:
+  - custom_structured_configuration_
+  - group_custom_structured_
+  - host_custom_structured_
+
+# Ansible connectivity definitions
+# eAPI connectivity via HTTPS is specified (as opposed to CLI via SSH)
+ansible_connection: ansible.netcommon.httpapi
+# Specifies that we are indeed using Arista EOS
+ansible_network_os: arista.eos.eos
+# This user/password must exist on the switches to enable Ansible access
+ansible_user: ansible
+ansible_password: ansible
+# User escalation (to enter enable mode)
+ansible_become: true
+ansible_become_method: enable
+# Use SSL (HTTPS)
+ansible_httpapi_use_ssl: true
+# Do not try to validate certs
+ansible_httpapi_validate_certs: false
+
+mgmt_interface_vrf: default
+mgmt_gateway: null
+name_servers:
+  - 169.254.169.254
+dns_domain: sjc.aristanetworks.com
+
+custom_structured_configuration_router_multicast:
+  ipv4:
+    software_forwarding: "kernel"
+
+custom_structured_configuration_agents:
+  - name: KernelFib
+    environment_variables:
+      - name: KERNELFIB_PROGRAM_ALL_ECMP
+        value: "'true'"
+
+custom_structured_configuration_aliases: |
+  alias cc clear counters
+  alias cpc clear platform trident counters
+  alias senz show interface counter error | nz
+  alias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'
+  alias snz show interface counter | nz
+  alias sqnz show interface counter queue | nz
+  alias srnz show interface counter rate | nz
+  username admin role network-admin privilege 15 secret sha512 $6$Jb3g.EWhQcUL.Ypz$.nH6693N11A4e7Zcsv8sWDxSKRO/0vTzbabDVGaSjDng/r7HvL8qrcojyCxUOwTyCOK15VrRz3iBj4HogSszq1
+  username cvpadmin secret sha512 $6$a/HsQ.4E0VbyEi4v$jsX5fxEwQJ4pmAX0GOXerffTmMmXfQ4aX/01f/iqqdXlOycL2UCrVZa96vPegCwV.LsYy4VV4JjOcNKJVkuxB.
+  username cwomble secret *
+  username cwomble ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDOZFQIhHNghkuJryYiNyFUbkVPyGH2tU1gFuoJ/wDDg420VY9tb1OQn7k+XoDaVWWoEoOek07sJzns0Yy7WYUhgHP3T8Q3qW2DRjRDCUgUXnt9iW9N/axh4U4OP71UbWJNw3D6b5JE4EWt56okFcR6eSAyyKoYZvUAiCX1oUGVbRDz0cTNTbbnYHXp8DFBM/3fLNrO7Ntif+1ZtY8IQoZoDaOZpQLqTt40QGBAJgyXy0xP3urSaSJP2alSZP0g2IY9WebHaJAKnzP+SCuU4pMpcWYE3EoevYB6RLy12WylXq7Ht8sy2cjB9HH19BM4lNvRJ7ArjsL8enBP4OdqdyCH/SfLy6YrQ2EFidNpxnGBNVxIA7lkK82jLGFiqKJJNapZW4nRljT+KVMFEh/NTDP61wYmUPCR331+e3TiKsapwcIN/Q1+20WBVf11RseChjLqZzu54y9PDw/MA8ra8mPbuenhNJ6Xw8nkZbeUr+o/jZHwTP0sTLFyv4uJKvOACBc=
+  username dlyssenko secret *
+  username dlyssenko ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDNXb2O9ciq3TIVGJOh3/XARvlg45QUAo6FFB0p7rnAXAd+z7AzXg2j9uFQ9NTuiupFdYWDAXYg6RNcrX3vjoSBOxb/cnSYREG9GLB+aVyxZ8fPDN4wq4s+VQzrSmzvBZ+P7/Y4E4GAZiRE3MaK/cPIqFrbHhZYfrg8BBivenCK4ztEI/OYAGWzza/5v6Mx3fW1xGsgZtFO6epmv0/OqRq8WnwoJiXdn0INa0Yx3xI5JbBpUj49EHUXpwo1HB+SEIzy0WxSoy4gVBic7qEXG2alfUtOqNPmgU6MVE0uiKspdKqoF0NYEO/cLSwIgBENnGX4y2NvAxTfgrHub2z+WpA9/Mo65rNnKNQdQ8xOAVyoeXMHwGcRZYN3HkK5NK+7jb7RWHcIieb/+7LGhRAQg8BhY7h3I6cpA7qTF4j3UAJRH6zS7wVRNqDM40EgEmylA+w2qMt7E+csTjgNJ3KX/jY0AG8jWeR7cZhvTnIfkGw4u9fhmLQSW4LSJpztJ0T0Otc=
+  username ec2-user shell /bin/bash nopassword
+  username ec2-user ssh-key ssh-rsa ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjacklo6yEWBtpXU2rL8mq6ab3qWWn2U7QrHz0yfl4+YW8FKV0xnlY6z/fAzOMEBcewq6M6cjDcUdqVNK/kWulAUcwa657zI0UmN+cjjJ3Gg7zRUTq6eijRWde0j6b09kfg5ZE9eFs+wBtwCa41yPl7kL61dXHkaqcQc0m9CPB3rSh0aF7DXtUrRHJipKRtkaXlIluwX5KRfedn5jz7yIweVCT0Ji8JqZcGnX8GtZaWuAlAZMIJMPlp+a+Dh9pSFozCERKPN14bt3syVQrLx3bfEcA5A3567G5BQoYdojM1wAaDl/aqVLWTYSIWoqIEZU5Fp9Gghp2TTX1JJeLVt2+YApllo0XNE0qf+l7IGojL/7wQN1vMoZ/+BjeLENiGkstwvGgZyY9cd5F8fFn/c4LldC8X7EX8oP8fznGkx7RTrXGOxpu/oRQ0Leg2Px8SULsL1g0DRkMt48UKIWcY7CBC6jDxA5T1C4CtxWpAPZaHiIH8F0nU3nPPyEvDLfdf+s= nonroot@buildkitsandbox
+  username gcp-user secret *
+  username gcp-user ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGPEoZ2l67eEEwrlGfBAHPMx44IoqhyfjqXj2Ka4PxLuHgi1mv131VuCRlyWjOjddccyFUilfR1Bprdmd1Tj7o4Q11YQ138LOqFWJT3h0pxgHFdIHo70y4rI8aL15ixukZYa+g9KX8qTN+ZpFfea2d3CEFzMp+Y3xVPiWwLKzalq1JwT5J4MK2VHCbcnpN3zRON+gca/iZH9upA0WaXWJXNBnYXrgXFVGCJFk6Yl1ZXIGnEcKGe44c77zWgF4C66VhltsW999XD5vF31f6TTs25qxGScsiKMDg2uM1AzVg5KfxxhVy5HKd23YJJMytvUXL9h5Wq1HEEluSCcFtNI81
+  username mircea secret *
+  username mircea ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDw26o1dbfin+wgiYhiHybYebcYlS1EpucVdzfZASTkaMnCiaGy61mLtCaiZA82MEMNbkHLr9WgO2f9pHN2fiIiJc2gmlZPAUvSDzOHQapGuWzoPbeoKTaPyEzkDD5IzerV8wgMooaJOIWU9dWRjVPpUyj2GJ3JirC3HiLRnhkHFh3F+vUkEL81lMzJ/0HdnW3WrIjU6JnuOnpjiJ+np1OEPSbBdANT89tzaEm87QUioPQF7hHknKFUYK2Zqh5SXR6vQaLEcIhRqlAvZyjc95vDtYFWzqrdrHTdznyr8Hs/R2OeLmPGArGm6V8sGC9Q1bGfbhwjxvoWH9igUO6d82HKL2h8PJ1gXJU4XCb6Dkft7y0M4CDx6tIOo9jDxwFRtim9oC0uwxsRoXL4xCDYGH+jO4RAQSVxP6MQsJBEOvXez6whUev1lR91CiXmtUwQfzfmol03U8xMsBkdZ+Y4B7AkBUIpi/+8aEbMwRACyDZJB0+FzkYuWIYpiqoQ4pwUVw8=
+  username service shell /bin/bash secret sha512 $6$rpyy.A3lNlFHChhB$VZxv2tWR6cX.tBALsAy.GUwR8ZLLp5KnShXclEpGhbTm3Cs0R9063wsYQ4OopovX8JSe2ucLBVHBfopeGUlP..
+
+cvp_instance_ips: ["10.18.152.163"]
+custom_structured_configuration_daemon_terminattr:
+  cvauth:
+    token_file: "/tmp/token"
+  disable_aaa: true
+
+aaa_authorization:
+  exec:
+    default: local
+
+custom_structured_configuration_system:
+  l1:
+    unsupported_speed_action: "error"
+    unsupported_error_correction_action: "error"
+
+custom_structured_configuration_spanning_tree:
+  mode: mstp
+
+clock:
+  timezone: "PST8PDT"
+
+ntp_settings:
+  server_vrf: default
+  servers:
+    - name: 0.us.pool.ntp.org
+
+# custom_structured_configuration_snmp_server:
+#   communities:
+#     - name: public
+#       access: ro

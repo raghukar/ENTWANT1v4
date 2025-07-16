@@ -1,0 +1,131 @@
+host_custom_structured_router_multicast:
+  ipv4:
+
+
+host_custom_structured_eos_cli: |-
+  no router bgp 65000
+  !
+  no router multicast
+  !
+  no ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+  !
+  no route-map RM-CONN-2-BGP permit 10
+  !
+  no router bfd
+  !
+  interface Ethernet1
+    description PE1
+    no shutdown
+    no switchport
+    ip address 10.1.0.33/31
+  !
+  ip route 10.0.0.0/29 10.1.0.32
+  !
+  vlan 501
+    name SVC4-L2EVPN
+  !
+  vlan 601
+    name SVC5-L3EVPN
+  !
+  vlan 901
+    name SVC9-BGP-PEER1
+  !
+  vlan 902
+    name SVC9-BGP-PEER2
+  !
+  vlan 1101
+    name SVC10-EVPN-GATEWAY
+  !
+  vrf instance SVC6
+  !
+  vrf instance SVC7
+  !
+  vrf instance SVC8
+  !
+  ip routing vrf SVC6
+  !
+  ip routing vrf SVC7
+  !
+  ip routing vrf SVC8
+  !
+  router bgp 65000
+    router-id 10.0.0.17
+    maximum-paths 4 ecmp 4
+    bgp additional-paths send limit 2
+    neighbor IBGP-PEER peer group
+    neighbor IBGP-PEER remote-as 65000
+    neighbor IBGP-PEER update-source Loopback0
+    neighbor IBGP-PEER route-reflector-client
+    neighbor IBGP-PEER send-community
+    neighbor IBGP-PEER maximum-routes 0
+    neighbor 10.0.0.1 peer group IBGP-PEER
+    neighbor 10.0.0.2 peer group IBGP-PEER
+    neighbor 10.0.0.3 peer group IBGP-PEER
+    neighbor 10.0.0.4 peer group IBGP-PEER
+    neighbor 10.0.0.5 peer group IBGP-PEER
+    neighbor 10.0.0.6 peer group IBGP-PEER
+    !
+    address-family evpn
+      neighbor IBGP-PEER activate
+      neighbor default encapsulation mpls next-hop-self source-interface Loopback0
+      next-hop resolution disabled
+    !
+    address-family ipv4
+      neighbor IBGP-PEER activate
+    !
+    address-family vpn-ipv4
+      neighbor IBGP-PEER activate
+      next-hop resolution disabled
+    !
+    vlan 1101
+        rd 10.0.0.17:1101
+        route-target both 0.0.0.0:21101
+        redistribute learned
+    !
+    vlan 501
+        rd 10.0.0.17:10501
+        route-target both 0.0.0.0:10501
+        redistribute learned
+    !
+    vlan 901
+        rd 10.0.0.17:10901
+        route-target both 0.0.0.0:10901
+        redistribute learned
+        redistribute static
+    !
+    vlan 902
+        rd 10.0.0.17:10902
+        route-target both 0.0.0.0:10902
+        redistribute learned
+        redistribute static
+    !
+    vpws SVC1-VPWS-SINGLE-2
+        rd 10.0.0.17:11101
+        route-target import export evpn 0.0.0.0:11101
+        mpls control-word
+        label flow
+        !
+        pseudowire pw1
+          evpn vpws id local 21101 remote 11101
+    !
+    vrf SVC6
+        rd 10.0.0.17:20601
+        route-target import evpn 0.0.0.0:20601
+        route-target export evpn 0.0.0.0:20601
+        redistribute connected
+        redistribute static
+    !
+    vrf SVC7
+        rd 10.0.0.17:10701
+        route-target import vpn-ipv4 0.0.0.0:10701
+        route-target export vpn-ipv4 0.0.0.0:10701
+        redistribute connected
+        redistribute static
+    !
+    vrf SVC8
+        rd 10.0.0.17:10801
+        route-target import evpn 0.0.0.0:20801
+        route-target export evpn 0.0.0.0:20801
+        redistribute connected
+        redistribute static
+    !  

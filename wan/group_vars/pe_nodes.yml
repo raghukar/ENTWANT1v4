@@ -1,0 +1,57 @@
+---
+# WAN PE Nodes
+
+type: pe
+
+underlay_routing_protocol: isis-sr
+overlay_routing_protocol: ibgp
+underlay_isis_instance_name: "IGP"
+isis_advertise_passive_only: False
+underlay_isis_bfd: true
+overlay_rt_type: 
+  admin_subfield: bgp_as
+
+# custom_structured_configuration_router_isis:
+#   instance: "1"
+#   eos_cli: |
+#     traffic-engineering
+#       no shutdown
+
+isis_ti_lfa:
+  enabled: true
+  protection: "link"
+
+bgp_update_wait_install: false
+bgp_as: 65000
+
+pe: # dynamic_key: node_type
+  defaults:
+    loopback_ipv4_pool: 10.254.99.0/28
+
+  nodes:
+    - name: PE1
+      id: 1
+      mgmt_ip: 192.168.0.11/24
+    - name: PE2
+      id: 2
+      mgmt_ip: 192.168.0.12/24
+    - name: PE3
+      id: 3
+      mgmt_ip: 192.168.0.13/24
+    - name: PE4
+      id: 4
+      mgmt_ip: 192.168.0.14/24
+    - name: PE5
+      id: 5
+      mgmt_ip: 192.168.0.15/24
+    - name: PE6
+      id: 6
+      mgmt_ip: 192.168.0.16/24
+
+custom_structured_configuration_router_bgp:
+  peer_groups:
+  address_family_ipv4:
+  address_family_vpn_ipv4:
+
+load_interval:
+  default: 2

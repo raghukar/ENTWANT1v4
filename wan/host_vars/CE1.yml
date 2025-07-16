@@ -1,0 +1,45 @@
+host_custom_structured_eos_cli: |-
+  no router bgp 1000
+  no interface Loopback0
+  !
+  no ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+  !
+  no route-map RM-CONN-2-BGP
+  !
+  no spanning-tree vlan-id 101,701,801
+  !
+  vlan 101
+    name SVC1-VPWS-SINGLE-2
+  !
+  vlan 501
+    name SVC4-l2EVPN
+  !
+  vlan 701
+    name SVC7
+  !
+  vlan 801
+    name SVC8
+  !
+  vlan 901
+    name SVC9-INTERNET
+  !
+  interface Ethernet1
+    description host2
+    switchport trunk native vlan 501
+    switchport trunk allowed vlan 101,501,701,801,901
+    switchport mode trunk
+  !
+  interface Ethernet2
+    description PE4
+    switchport trunk allowed vlan 101,501,701,801,901
+    switchport mode trunk
+  !
+  interface Ethernet5
+    description PE3
+    switchport trunk allowed vlan 101,501,701,801,901
+    switchport mode trunk
+  !
+  interface Vlan701
+    ip address 192.168.107.99/24
+  !
+

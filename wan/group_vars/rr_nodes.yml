@@ -1,0 +1,21 @@
+---
+# WAN RR Nodes
+
+type: spine
+
+bgp_as: 65000
+bgp_update_wait_install: false
+
+
+spine: # dynamic_key: node_type
+  defaults:
+    loopback_ipv4_pool: 10.0.0.16/30
+  nodes:
+    - name: RR1
+      id: 1
+      mgmt_ip: 192.168.0.31/24
+
+    - name: RR2
+      id: 2
+      mgmt_ip: 192.168.0.33/24
+

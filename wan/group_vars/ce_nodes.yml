@@ -1,0 +1,29 @@
+---
+# WAN CE Nodes
+
+type: spine
+
+bgp_update_wait_install: false
+bgp_as: 1000
+
+spine: # dynamic_key: node_type
+  defaults:
+    loopback_ipv4_pool: 10.252.99.0/28
+  nodes:
+    - name: CE1
+      id: 2
+      mgmt_ip: 192.168.0.52/24      
+    - name: CE2
+      id: 4
+      mgmt_ip: 192.168.0.54/24
+
+custom_structured_configuration_router_bgp:
+  router_id:
+
+custom_structured_configuration_loopback_interfaces:
+  - name: Loopback0
+    ip_address: 
+
+logging:
+  format:
+    timestamp: "traditional year timezone"

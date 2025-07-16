@@ -1,0 +1,37 @@
+host_custom_structured_eos_cli: |-
+  no router bgp 1000
+  no interface Loopback0
+  !
+  no ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+  !
+  no route-map RM-CONN-2-BGP
+  !
+  interface Ethernet1
+    description host1
+    no switchport
+    ip address 100.200.10.21/30
+  !
+  interface Ethernet49
+    description PE1
+    no switchport
+    ip address 100.1.0.1/31
+  !
+  interface Ethernet50
+    description PE2
+    no switchport
+    ip address 100.2.0.1/31
+  !
+  ip route 192.168.9.1/32 100.1.0.0
+  ip route 192.168.9.10/32 100.1.0.0
+  !
+  router bgp 100
+    maximum-paths 2
+    bgp additional-paths install
+    neighbor 100.1.0.0 remote-as 65000
+    neighbor 100.1.0.0 local-as 300 no-prepend replace-as
+    neighbor 100.1.0.0 maximum-routes 0
+    neighbor 100.2.0.0 remote-as 65000
+    neighbor 100.2.0.0 local-as 200 no-prepend replace-as
+    neighbor 100.2.0.0 maximum-routes 0
+    redistribute connected
+  !

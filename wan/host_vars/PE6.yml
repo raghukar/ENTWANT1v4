@@ -1,0 +1,298 @@
+
+host_custom_structured_router_bgp:
+  router_id: 10.0.0.6
+
+host_custom_structured_loopback_interfaces:
+- name: Loopback0
+  ip_address: 10.0.0.6/32
+  isis_passive: False
+  node_segment:
+    ipv4_index: 4
+  eos_cli: |-
+    node-segment ipv4 index 104 flex-algo LOWLATENCY
+    node-segment ipv4 index 204 flex-algo CHEAPBW
+
+host_custom_structured_router_isis:
+  net: 49.0000.0000.0100.0006.00
+  router_id: 10.0.0.6
+  set_overload_bit:
+    on_startup:
+      delay: 300
+  timers:
+    local_convergence:
+      protected_prefixes: True
+    lsp:
+      out_delay: 2000
+  spf_interval:
+    interval: 2
+    wait_interval: 10
+    hold_interval: 100
+  advertise:
+    passive_only: false
+
+host_custom_structured_eos_cli: |-
+  vlan 501
+    name SVC4-L2EVPN
+  !
+  vlan 601
+    name SVC5-L3EVPN
+  !
+  vlan 901
+    name SVC9-BGP-PEER1
+  !
+  vlan 902
+    name SVC9-BGP-PEER2
+  !
+  vlan 1101
+    name SVC10-EVPN-GATEWAY
+  !
+  vrf instance SVC6
+  !
+  vrf instance SVC7
+  !
+  vrf instance SVC8
+  !
+  interface Ethernet4.101
+    description SVC1-VPWS-SINGLE-2
+    !
+    encapsulation vlan
+        client dot1q 101
+  !
+  interface Ethernet4.501
+    description SVC4-L2EVPN
+    vlan id 501
+    !
+    encapsulation vlan
+      client dot1q 501
+    !
+    evpn ethernet-segment
+        identifier 0000:0000:0000:0000:0501
+        route-target import 00:00:00:00:05:01
+  !
+  interface Ethernet4.601
+    description SVC5-L3EVPN
+    vlan id 601
+    !
+    encapsulation vlan
+        client dot1q 601
+    !
+  !
+  interface Ethernet4.701
+    description SVC7-4364
+    encapsulation dot1q vlan 701
+    vrf SVC7
+    ip address 192.168.217.1/24
+  !
+  interface Ethernet4.801
+    description SVC8-INTERWORKING
+    encapsulation dot1q vlan 801
+    vrf SVC8
+    ip address 192.168.218.1/24
+  !
+  interface Ethernet4.901
+    description SVC9-BGP-PEER1
+    vlan id 901
+    !
+    encapsulation vlan
+        client dot1q 901
+    !
+    evpn ethernet-segment
+        identifier 0000:0000:0000:0000:0901
+        route-target import 00:00:00:00:09:01
+  !
+  interface Ethernet4.902
+    description SVC9-BGP-PEER2
+    vlan id 902
+    !
+    encapsulation vlan
+        client dot1q 902
+    !
+    evpn ethernet-segment
+        identifier 0000:0000:0000:0000:0902
+        route-target import 00:00:00:00:09:02
+  !
+  interface Ethernet4.1101
+    description SVC10-EVPN-GATEWAY
+    vlan id 1101
+    !
+    encapsulation vlan
+        client dot1q 1101
+    !
+    evpn ethernet-segment
+        identifier 0000:0000:0000:0000:1101
+        route-target import 00:00:00:00:11:01
+  !
+  interface Ethernet1
+    description PE2
+    no switchport
+    ip address 10.1.0.5/31
+    bfd interval 50 min-rx 50 multiplier 3
+    isis enable IGP
+    isis network point-to-point
+    traffic-engineering min-delay static 10 milliseconds
+  !
+  interface Ethernet2
+    description PE5
+    no switchport
+    ip address 10.1.0.6/31
+    bfd interval 50 min-rx 50 multiplier 3
+    isis enable IGP
+    isis network point-to-point
+    traffic-engineering min-delay static 10 milliseconds
+  !
+  interface Ethernet4
+    description CE2
+    bgp session tracker ROUTE_REFLECTORS
+    no switchport
+    !
+    evpn ethernet-segment
+        identifier 0010:1001:0000:0000:0000
+        route-target import 10:10:01:00:00:00
+  !
+  interface Ethernet5
+    description RR2
+    no switchport
+    isis enable IGP
+    ip address 10.1.0.34/31
+  !
+  interface Loopback0
+    ip address 10.0.0.6/32
+    node-segment ipv4 index 6
+    node-segment ipv4 index 104 flex-algo LOWLATENCY
+    node-segment ipv4 index 204 flex-algo CHEAPBW
+    isis instance IGP
+  !
+  interface Vlan601
+    vrf SVC6
+    ip address 192.168.116.1/24
+  !
+  ip virtual-router mac-address 00:1c:73:00:00:00
+  !
+  ip routing vrf SVC6
+  !
+  ip routing vrf SVC7
+  !
+  ip routing vrf SVC8
+  !
+  ip extcommunity-list L3EVPN_COM permit rt 0.0.0.0:20601
+  !
+  patch panel
+    patch subintf-101-101
+        connector 1 interface Ethernet4.101
+        connector 2 pseudowire bgp vpws SVC1-VPWS-SINGLE-2 pseudowire pw1
+  !
+  route-map COLOR_L2VPN permit 11
+    match extcommunity L3EVPN_COM
+    set extcommunity color 130 additive
+  !
+  route-map COLOR_L2VPN permit 20
+  !
+  ip route 10.0.0.18/32 10.1.0.35
+  !
+  router bgp 65000
+    router-id 10.0.0.6
+    maximum-paths 4 ecmp 4
+    bgp additional-paths send limit 2
+    neighbor IBGP-PEER peer group
+    neighbor IBGP-PEER remote-as 65000
+    neighbor IBGP-PEER update-source Loopback0
+    neighbor IBGP-PEER session tracker ROUTE_REFLECTORS
+    neighbor IBGP-PEER send-community
+    neighbor IBGP-PEER maximum-routes 0
+    neighbor 10.0.0.17 peer group IBGP-PEER
+    neighbor 10.0.0.18 peer group IBGP-PEER
+    !
+    vlan 1101
+        rd 10.0.0.6:1101
+        route-target both 0.0.0.0:21101
+        redistribute learned
+    !
+    vlan 501
+        rd 10.0.0.6:10501
+        route-target both 0.0.0.0:10501
+        redistribute learned
+    !
+    vlan 901
+        rd 10.0.0.6:10901
+        route-target both 0.0.0.0:10901
+        redistribute learned
+        redistribute static
+    !
+    vlan 902
+        rd 10.0.0.6:10902
+        route-target both 0.0.0.0:10902
+        redistribute learned
+        redistribute static
+    !
+    vpws SVC1-VPWS-SINGLE-2
+        rd 10.0.0.6:11101
+        route-target import export evpn 0.0.0.0:11101
+        mpls control-word
+        label flow
+        !
+        pseudowire pw1
+          evpn vpws id local 21101 remote 11101
+    !
+    address-family evpn
+        neighbor default encapsulation mpls next-hop-self source-interface Loopback0
+        neighbor IBGP-PEER activate
+    !
+    address-family ipv4
+        neighbor IBGP-PEER activate
+        neighbor IBGP-PEER additional-paths receive
+        neighbor IBGP-PEER additional-paths send limit 2
+        redistribute connected
+    !
+    address-family vpn-ipv4
+        neighbor IBGP-PEER activate
+    !
+    vrf SVC6
+        rd 10.0.0.6:20601
+        route-target import evpn 0.0.0.0:20601
+        route-target export evpn 0.0.0.0:20601
+        redistribute connected
+        redistribute static
+    !
+    vrf SVC7
+        rd 10.0.0.6:10701
+        route-target import vpn-ipv4 0.0.0.0:10701
+        route-target export vpn-ipv4 0.0.0.0:10701
+        redistribute connected
+        redistribute static
+    !
+    vrf SVC8
+        rd 10.0.0.6:10801
+        route-target import evpn 0.0.0.0:20801
+        route-target export evpn 0.0.0.0:20801
+        redistribute connected
+        redistribute static
+    !
+    session tracker ROUTE_REFLECTORS
+        recovery delay 600 seconds
+  !
+  router traffic-engineering
+    flex-algo
+        flex-algo 128 LOWLATENCY
+          metric min-delay
+          color 130
+        !
+        flex-algo 255 CHEAPBW
+          color 230
+  !
+  router isis IGP
+    net 49.0000.0000.0100.0006.00
+    is-type level-2
+    redistribute static
+    timers local-convergence-delay protected-prefixes
+    set-overload-bit on-startup 300
+    spf-interval 2 10 100
+    timers lsp out-delay 2000
+    !
+    address-family ipv4 unicast
+        fast-reroute ti-lfa mode node-protection
+    !
+    segment-routing mpls
+        no shutdown
+        flex-algo CHEAPBW level-2 advertised
+        flex-algo LOWLATENCY level-2 advertised
+  !

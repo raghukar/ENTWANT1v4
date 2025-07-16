@@ -1,0 +1,216 @@
+aaa_root:
+  disabled: true
+agents:
+- name: KernelFib
+  environment_variables:
+  - name: KERNELFIB_PROGRAM_ALL_ECMP
+    value: '''true'''
+aliases: 'alias cc clear counters
+
+  alias cpc clear platform trident counters
+
+  alias senz show interface counter error | nz
+
+  alias shmc show int | awk ''/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }''
+
+  alias snz show interface counter | nz
+
+  alias sqnz show interface counter queue | nz
+
+  alias srnz show interface counter rate | nz
+
+  username admin role network-admin privilege 15 secret sha512 $6$Jb3g.EWhQcUL.Ypz$.nH6693N11A4e7Zcsv8sWDxSKRO/0vTzbabDVGaSjDng/r7HvL8qrcojyCxUOwTyCOK15VrRz3iBj4HogSszq1
+
+  username cvpadmin secret sha512 $6$a/HsQ.4E0VbyEi4v$jsX5fxEwQJ4pmAX0GOXerffTmMmXfQ4aX/01f/iqqdXlOycL2UCrVZa96vPegCwV.LsYy4VV4JjOcNKJVkuxB.
+
+  username cwomble secret *
+
+  username cwomble ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDOZFQIhHNghkuJryYiNyFUbkVPyGH2tU1gFuoJ/wDDg420VY9tb1OQn7k+XoDaVWWoEoOek07sJzns0Yy7WYUhgHP3T8Q3qW2DRjRDCUgUXnt9iW9N/axh4U4OP71UbWJNw3D6b5JE4EWt56okFcR6eSAyyKoYZvUAiCX1oUGVbRDz0cTNTbbnYHXp8DFBM/3fLNrO7Ntif+1ZtY8IQoZoDaOZpQLqTt40QGBAJgyXy0xP3urSaSJP2alSZP0g2IY9WebHaJAKnzP+SCuU4pMpcWYE3EoevYB6RLy12WylXq7Ht8sy2cjB9HH19BM4lNvRJ7ArjsL8enBP4OdqdyCH/SfLy6YrQ2EFidNpxnGBNVxIA7lkK82jLGFiqKJJNapZW4nRljT+KVMFEh/NTDP61wYmUPCR331+e3TiKsapwcIN/Q1+20WBVf11RseChjLqZzu54y9PDw/MA8ra8mPbuenhNJ6Xw8nkZbeUr+o/jZHwTP0sTLFyv4uJKvOACBc=
+
+  username dlyssenko secret *
+
+  username dlyssenko ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDNXb2O9ciq3TIVGJOh3/XARvlg45QUAo6FFB0p7rnAXAd+z7AzXg2j9uFQ9NTuiupFdYWDAXYg6RNcrX3vjoSBOxb/cnSYREG9GLB+aVyxZ8fPDN4wq4s+VQzrSmzvBZ+P7/Y4E4GAZiRE3MaK/cPIqFrbHhZYfrg8BBivenCK4ztEI/OYAGWzza/5v6Mx3fW1xGsgZtFO6epmv0/OqRq8WnwoJiXdn0INa0Yx3xI5JbBpUj49EHUXpwo1HB+SEIzy0WxSoy4gVBic7qEXG2alfUtOqNPmgU6MVE0uiKspdKqoF0NYEO/cLSwIgBENnGX4y2NvAxTfgrHub2z+WpA9/Mo65rNnKNQdQ8xOAVyoeXMHwGcRZYN3HkK5NK+7jb7RWHcIieb/+7LGhRAQg8BhY7h3I6cpA7qTF4j3UAJRH6zS7wVRNqDM40EgEmylA+w2qMt7E+csTjgNJ3KX/jY0AG8jWeR7cZhvTnIfkGw4u9fhmLQSW4LSJpztJ0T0Otc=
+
+  username ec2-user shell /bin/bash nopassword
+
+  username ec2-user ssh-key ssh-rsa ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjacklo6yEWBtpXU2rL8mq6ab3qWWn2U7QrHz0yfl4+YW8FKV0xnlY6z/fAzOMEBcewq6M6cjDcUdqVNK/kWulAUcwa657zI0UmN+cjjJ3Gg7zRUTq6eijRWde0j6b09kfg5ZE9eFs+wBtwCa41yPl7kL61dXHkaqcQc0m9CPB3rSh0aF7DXtUrRHJipKRtkaXlIluwX5KRfedn5jz7yIweVCT0Ji8JqZcGnX8GtZaWuAlAZMIJMPlp+a+Dh9pSFozCERKPN14bt3syVQrLx3bfEcA5A3567G5BQoYdojM1wAaDl/aqVLWTYSIWoqIEZU5Fp9Gghp2TTX1JJeLVt2+YApllo0XNE0qf+l7IGojL/7wQN1vMoZ/+BjeLENiGkstwvGgZyY9cd5F8fFn/c4LldC8X7EX8oP8fznGkx7RTrXGOxpu/oRQ0Leg2Px8SULsL1g0DRkMt48UKIWcY7CBC6jDxA5T1C4CtxWpAPZaHiIH8F0nU3nPPyEvDLfdf+s=
+  nonroot@buildkitsandbox
+
+  username gcp-user secret *
+
+  username gcp-user ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGPEoZ2l67eEEwrlGfBAHPMx44IoqhyfjqXj2Ka4PxLuHgi1mv131VuCRlyWjOjddccyFUilfR1Bprdmd1Tj7o4Q11YQ138LOqFWJT3h0pxgHFdIHo70y4rI8aL15ixukZYa+g9KX8qTN+ZpFfea2d3CEFzMp+Y3xVPiWwLKzalq1JwT5J4MK2VHCbcnpN3zRON+gca/iZH9upA0WaXWJXNBnYXrgXFVGCJFk6Yl1ZXIGnEcKGe44c77zWgF4C66VhltsW999XD5vF31f6TTs25qxGScsiKMDg2uM1AzVg5KfxxhVy5HKd23YJJMytvUXL9h5Wq1HEEluSCcFtNI81
+
+  username mircea secret *
+
+  username mircea ssh-key ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDw26o1dbfin+wgiYhiHybYebcYlS1EpucVdzfZASTkaMnCiaGy61mLtCaiZA82MEMNbkHLr9WgO2f9pHN2fiIiJc2gmlZPAUvSDzOHQapGuWzoPbeoKTaPyEzkDD5IzerV8wgMooaJOIWU9dWRjVPpUyj2GJ3JirC3HiLRnhkHFh3F+vUkEL81lMzJ/0HdnW3WrIjU6JnuOnpjiJ+np1OEPSbBdANT89tzaEm87QUioPQF7hHknKFUYK2Zqh5SXR6vQaLEcIhRqlAvZyjc95vDtYFWzqrdrHTdznyr8Hs/R2OeLmPGArGm6V8sGC9Q1bGfbhwjxvoWH9igUO6d82HKL2h8PJ1gXJU4XCb6Dkft7y0M4CDx6tIOo9jDxwFRtim9oC0uwxsRoXL4xCDYGH+jO4RAQSVxP6MQsJBEOvXez6whUev1lR91CiXmtUwQfzfmol03U8xMsBkdZ+Y4B7AkBUIpi/+8aEbMwRACyDZJB0+FzkYuWIYpiqoQ4pwUVw8=
+
+  username service shell /bin/bash secret sha512 $6$rpyy.A3lNlFHChhB$VZxv2tWR6cX.tBALsAy.GUwR8ZLLp5KnShXclEpGhbTm3Cs0R9063wsYQ4OopovX8JSe2ucLBVHBfopeGUlP..
+
+  '
+config_end: true
+daemon_terminattr:
+  cvaddrs:
+  - 10.18.152.163:9910
+  cvauth:
+    method: token
+    token_file: /tmp/token
+  cvvrf: default
+  disable_aaa: true
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+enable_password:
+  disabled: true
+eos_cli: "\nvlan 501\n  name SVC4-L2EVPN\n!\nvlan 601\n  name SVC5-L3EVPN\n!\nvlan 901\n  name SVC9-BGP-PEER1\n!\nvlan 902\n  name SVC9-BGP-PEER2\n!\nvlan
+  1101\n  name SVC10-EVPN-GATEWAY\n!\nvrf instance SVC6\n!\nvrf instance SVC7\n!\nvrf instance SVC8\n!\ninterface Ethernet5.101\n  description
+  SVC1-VPWS-SINGLE-2\n  !\n  encapsulation vlan\n    client dot1q 101\n!\ninterface Ethernet5.501\n  description SVC4-L2EVPN\n  vlan
+  id 501\n  !\n  encapsulation vlan\n    client dot1q 501\n  !\n  evpn ethernet-segment\n      identifier 0000:0000:0000:0000:0501\n
+  \     route-target import 00:00:00:00:05:01\n!\ninterface Ethernet5.601\n  description SVC5-L3EVPN\n  vlan id 601\n  !\n  encapsulation
+  vlan\n      client dot1q 601\n  !\n!\ninterface Ethernet5.701\n  description SVC7-4364\n  encapsulation dot1q vlan 701\n  vrf SVC7\n
+  \ ip address 192.168.207.1/24\n!\ninterface Ethernet5.801\n  description SVC8-INTERWORKING\n  encapsulation dot1q vlan 801\n  vrf
+  SVC8\n  ip address 192.168.208.1/24\n!\ninterface Ethernet5.901\n  description SVC9-BGP-PEER1\n  vlan id 901\n  !\n  encapsulation
+  vlan\n      client dot1q 901\n  !\n  evpn ethernet-segment\n      identifier 0000:0000:0000:0000:0901\n      route-target import 00:00:00:00:09:01\n!\ninterface
+  Ethernet5.902\n  description SVC9-BGP-PEER2\n  vlan id 902\n  !\n  encapsulation vlan\n      client dot1q 902\n  !\n  evpn ethernet-segment\n
+  \     identifier 0000:0000:0000:0000:0902\n      route-target import 00:00:00:00:09:02\n!\ninterface Ethernet5.1101\n  description
+  SVC10-EVPN-GATEWAY\n  vlan id 1101\n  !\n  encapsulation vlan\n      client dot1q 1101\n  !\n  evpn ethernet-segment\n      identifier
+  0000:0000:0000:0000:1101\n      route-target import 00:00:00:00:11:01\n!\ninterface Ethernet1\n  description PE4\n  no switchport\n
+  \ ip address 10.1.0.8/31\n  arp aging timeout 3\n  bfd interval 50 min-rx 50 multiplier 3\n  isis enable IGP\n  isis network point-to-point\n
+  \ traffic-engineering min-delay static 10 milliseconds\n!\ninterface Ethernet3\n  description PE6\n  no switchport\n  ip address 10.1.0.7/31\n
+  \ bfd interval 50 min-rx 50 multiplier 3\n  isis enable IGP\n  isis network point-to-point\n  traffic-engineering min-delay static
+  10 milliseconds\n!\ninterface Ethernet5\n  description CE2\n  bgp session tracker ROUTE_REFLECTORS\n  no switchport\n  !\n  evpn ethernet-segment\n
+  \     identifier 0010:1001:0000:0000:0000\n      route-target import 10:10:01:00:00:00\n!\ninterface Loopback0\n  ip address 10.0.0.5/32\n
+  \ node-segment ipv4 index 5\n  node-segment ipv4 index 103 flex-algo LOWLATENCY\n  node-segment ipv4 index 203 flex-algo CHEAPBW\n
+  \ isis instance IGP\n!\ninterface Vlan601\n  vrf SVC6\n  ip address 192.168.106.1/24\n!\nip virtual-router mac-address 00:1c:73:00:00:00\n!\nip
+  routing vrf SVC6\n!\nip routing vrf SVC7\n!\nip routing vrf SVC8\n!\nip extcommunity-list L2EVPN_COM permit rt 0.0.0.0:10501\nip extcommunity-list
+  L3EVPN_COM permit rt 0.0.0.0:20601\n!\npatch panel\n  patch subintf-101-101\n      connector 1 interface Ethernet5.101\n      connector
+  2 pseudowire bgp vpws SVC1-VPWS-SINGLE-2 pseudowire pw1\n!\nroute-map COLOR_L2VPN permit 10\n  match extcommunity L2EVPN_COM\n  set
+  extcommunity color 30 additive\n!\nroute-map COLOR_L2VPN permit 11\n  match extcommunity L3EVPN_COM\n  set extcommunity color 130
+  additive\n!\nroute-map COLOR_L2VPN permit 20\n!\nrouter bgp 65000\n  router-id 10.0.0.5\n  maximum-paths 4 ecmp 4\n  neighbor IBGP-PEER
+  peer group\n  neighbor IBGP-PEER remote-as 65000\n  neighbor IBGP-PEER update-source Loopback0\n  neighbor IBGP-PEER bfd\n  neighbor
+  IBGP-PEER session tracker ROUTE_REFLECTORS\n  neighbor IBGP-PEER send-community\n  neighbor IBGP-PEER maximum-routes 0\n  neighbor
+  10.0.0.17 peer group IBGP-PEER\n  neighbor 10.0.0.18 peer group IBGP-PEER\n  !\n  vlan 1101\n      rd 10.0.0.5:1101\n      route-target
+  both 0.0.0.0:21101\n      redistribute learned\n  !\n  vlan 501\n      rd 10.0.0.5:10501\n      route-target both 0.0.0.0:10501\n
+  \     redistribute learned\n  !\n  vlan 901\n      rd 10.0.0.5:10901\n      route-target both 0.0.0.0:10901\n      redistribute learned\n
+  \     redistribute static\n  !\n  vlan 902\n      rd 10.0.0.5:10902\n      route-target both 0.0.0.0:10902\n      redistribute learned\n
+  \     redistribute static\n  !\n  vpws SVC1-VPWS-SINGLE-2\n      rd 10.0.0.5:11101\n      route-target import export evpn 0.0.0.0:11101\n
+  \     mpls control-word\n      label flow\n      !\n      pseudowire pw1\n        evpn vpws id local 21101 remote 11101\n  !\n  address-family
+  evpn\n      neighbor default encapsulation mpls next-hop-self source-interface Loopback0\n      neighbor IBGP-PEER activate\n  !\n
+  \ address-family ipv4\n      neighbor IBGP-PEER activate\n      neighbor IBGP-PEER additional-paths receive\n      neighbor IBGP-PEER
+  additional-paths send limit 2\n      redistribute connected\n  !\n  address-family vpn-ipv4\n      neighbor IBGP-PEER activate\n  !\n
+  \ vrf SVC6\n      rd 10.0.0.5:20601\n      route-target import evpn 0.0.0.0:20601\n      route-target export evpn 0.0.0.0:20601\n
+  \     redistribute connected\n      redistribute static\n  !\n  vrf SVC7\n      rd 10.0.0.5:10701\n      route-target import vpn-ipv4
+  0.0.0.0:10701\n      route-target export vpn-ipv4 0.0.0.0:10701\n      redistribute connected\n      redistribute static\n  !\n  vrf
+  SVC8\n      rd 10.0.0.5:10801\n      route-target import evpn 0.0.0.0:20801\n      route-target export evpn 0.0.0.0:20801\n      redistribute
+  connected\n      redistribute static\n  !\n  session tracker ROUTE_REFLECTORS\n      recovery delay 600 seconds\n!\nrouter traffic-engineering\n
+  \ segment-routing\n  !\n  flex-algo\n      flex-algo 128 LOWLATENCY\n        metric min-delay\n        color 130\n      !\n      flex-algo
+  255 CHEAPBW\n        color 230\n!\nrouter isis IGP\n  net 49.0000.0000.0100.0005.00\n  is-type level-2\n  timers local-convergence-delay
+  protected-prefixes\n  set-overload-bit on-startup 300\n  spf-interval 2 10 100\n  timers lsp out-delay 2000\n  !\n  address-family
+  ipv4 unicast\n      fast-reroute ti-lfa mode node-protection\n  !\n  segment-routing mpls\n      no shutdown\n      flex-algo CHEAPBW
+  level-2 advertised\n      flex-algo LOWLATENCY level-2 advertised\n!\ncfm\n  profile POC\n      continuity-check tx-interval 10 milliseconds\n
+  \ !\n  domain 5 level 5\n      association 12\n        direction down\n        profile POC\n        !\n        end-point 1\n!"
+hostname: PE5
+ip_igmp_snooping:
+  globally_enabled: true
+ip_name_servers:
+- ip_address: 169.254.169.254
+  vrf: default
+ip_routing: true
+is_deployed: true
+load_interval:
+  default: 2
+loopback_interfaces:
+- name: Loopback0
+  description: ROUTER_ID
+  shutdown: false
+  ip_address: 10.0.0.5/32
+  isis_enable: IGP
+  isis_passive: false
+  node_segment:
+    ipv4_index: 3
+  eos_cli: 'node-segment ipv4 index 103 flex-algo LOWLATENCY
+
+    node-segment ipv4 index 203 flex-algo CHEAPBW'
+management_api_http:
+  enable_https: true
+  enable_vrfs:
+  - name: default
+management_interfaces:
+- name: Management1
+  description: OOB_MANAGEMENT
+  shutdown: false
+  vrf: default
+  ip_address: 192.168.0.15/24
+  type: oob
+metadata:
+  fabric_name: WAN
+mpls:
+  ip: true
+ntp:
+  servers:
+  - name: 0.us.pool.ntp.org
+    preferred: true
+    vrf: default
+router_bfd:
+  multihop:
+    interval: 300
+    min_rx: 300
+    multiplier: 3
+router_bgp:
+  as: '65000'
+  router_id: 10.0.0.5
+  maximum_paths:
+    paths: 4
+    ecmp: 4
+  bgp:
+    default:
+      ipv4_unicast: false
+  peer_groups: null
+  address_family_ipv4: null
+  address_family_vpn_ipv4: null
+router_isis:
+  instance: IGP
+  net: 49.0000.0000.0100.0005.00
+  router_id: 10.0.0.5
+  is_type: level-2
+  log_adjacency_changes: true
+  timers:
+    local_convergence:
+      protected_prefixes: true
+      delay: 10000
+    lsp:
+      out_delay: 2000
+  set_overload_bit:
+    on_startup:
+      delay: 300
+  advertise:
+    passive_only: false
+  address_family_ipv4:
+    enabled: true
+    maximum_paths: 4
+    fast_reroute_ti_lfa:
+      mode: link-protection
+  segment_routing_mpls:
+    enabled: true
+    router_id: 10.254.99.5
+  spf_interval:
+    interval: 2
+    wait_interval: 10
+    hold_interval: 100
+router_multicast:
+  ipv4:
+    software_forwarding: kernel
+service_routing_protocols_model: multi-agent
+spanning_tree:
+  mode: mstp
+system:
+  l1:
+    unsupported_speed_action: error
+    unsupported_error_correction_action: error
+transceiver_qsfp_default_mode_4x10: true
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+vrfs:
+- name: default
+  ip_routing: false

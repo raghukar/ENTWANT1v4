@@ -1,0 +1,25 @@
+---
+all:
+  children:
+    WAN:
+      children:
+        pe_nodes:
+          hosts:
+            PE1:
+            PE2:
+            PE3:
+            PE4:
+            PE5:
+            PE6:
+        ce_nodes:
+          hosts:
+            CE1:
+            CE2:
+        IntAgg_nodes:
+          hosts:
+            IntAgg1:
+        rr_nodes:
+          hosts:
+            RR1:
+            RR2:
+

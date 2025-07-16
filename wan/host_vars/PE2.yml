@@ -1,0 +1,155 @@
+
+host_custom_structured_router_bgp:
+  router_id: 10.0.0.2
+
+host_custom_structured_loopback_interfaces:
+- name: Loopback0
+  ip_address: 10.0.0.2/32
+  isis_passive: False
+  node_segment:
+    ipv4_index: 5
+  eos_cli: |-
+    node-segment ipv4 index 105 flex-algo LOWLATENCY
+    node-segment ipv4 index 205 flex-algo CHEAPBW
+
+host_custom_structured_router_isis:
+  net: 49.0000.0000.0100.0002.00
+  router_id: 10.0.0.2
+  set_overload_bit:
+    on_startup:
+      delay: 300
+  timers:
+    local_convergence:
+      protected_prefixes: True
+    lsp:
+      out_delay: 2000
+  spf_interval:
+    interval: 2
+    wait_interval: 10
+    hold_interval: 100
+  advertise:
+    passive_only: false
+
+logging:
+  format:
+    timestamp: "traditional year timezone"
+
+host_custom_structured_eos_cli: |-
+  no spanning-tree vlan-id 901-902
+  !
+  vlan 902
+  !
+  interface Ethernet1
+    description IntAgg1
+    no switchport
+    ip address 100.2.0.0/31
+  !
+  interface Ethernet3
+    description PE1
+    no switchport
+    ip address 10.1.0.3/31
+    bfd interval 50 min-rx 50 multiplier 3
+    isis enable IGP
+    isis network point-to-point
+    traffic-engineering min-delay static 10 milliseconds
+  !
+  interface Ethernet4
+    description PE6
+    no switchport
+    ip address 10.1.0.4/31
+    bfd interval 50 min-rx 50 multiplier 3
+    isis enable IGP
+    isis network point-to-point
+    traffic-engineering min-delay static 10 milliseconds
+  !
+  interface Ethernet16
+    switchport access vlan 901
+    switchport mode trunk
+  !
+  interface Loopback0
+    ip address 10.0.0.2/32
+    node-segment ipv4 index 2
+    node-segment ipv4 index 105 flex-algo LOWLATENCY
+    node-segment ipv4 index 205 flex-algo CHEAPBW
+    isis instance IGP
+  !
+  interface Vlan902
+    ip address 192.168.92.1/24
+  !
+  router bgp 65000
+    router-id 10.0.0.2
+    update wait-install
+    maximum-paths 4 ecmp 4
+    neighbor EBGP-PEER peer group
+    neighbor EBGP-PEER remote-as 200
+    neighbor EBGP-PEER maximum-routes 0
+    neighbor IBGP-PEER peer group
+    neighbor IBGP-PEER remote-as 65000
+    neighbor IBGP-PEER update-source Loopback0
+    neighbor IBGP-PEER bfd
+    neighbor IBGP-PEER session tracker ROUTE_REFLECTORS
+    neighbor IBGP-PEER send-community
+    neighbor IBGP-PEER maximum-routes 0
+    neighbor 10.0.0.17 peer group IBGP-PEER
+    neighbor 10.0.0.18 peer group IBGP-PEER
+    neighbor 100.2.0.1 peer group EBGP-PEER
+    neighbor 192.168.9.10 bfd
+    neighbor 192.168.92.10 remote-as 1000
+    neighbor 192.168.92.10 bfd
+    !
+    vlan 901
+        rd 10.0.0.2:10901
+        route-target both 0.0.0.0:10901
+        redistribute learned
+        redistribute static
+        redistribute router-mac system default-gateway
+    !
+    vlan 902
+        rd 10.0.0.2:10902
+        route-target both 0.0.0.0:10902
+        redistribute learned
+        redistribute static
+        redistribute router-mac system default-gateway
+    !
+    address-family evpn
+        neighbor default encapsulation mpls next-hop-self source-interface Loopback0
+        neighbor IBGP-PEER activate
+    !
+    address-family ipv4
+        bgp additional-paths install
+        neighbor IBGP-PEER activate
+        neighbor IBGP-PEER additional-paths receive
+        neighbor IBGP-PEER additional-paths send limit 2
+        neighbor 192.168.92.10 activate
+        neighbor EBGP-PEER activate
+        redistribute connected
+    !
+    session tracker ROUTE_REFLECTORS
+        recovery delay 600 seconds
+  !
+  router traffic-engineering
+    flex-algo
+        flex-algo 128 LOWLATENCY
+          metric min-delay
+          color 130
+        !
+        flex-algo 255 CHEAPBW
+          color 230
+  !
+  router isis IGP
+    net 49.0000.0000.0100.0002.00
+    is-type level-2
+    timers local-convergence-delay protected-prefixes
+    set-overload-bit on-startup 300
+    spf-interval 2 10 100
+    timers lsp out-delay 2000
+    !
+    address-family ipv4 unicast
+        fast-reroute ti-lfa mode node-protection
+    !
+    segment-routing mpls
+        no shutdown
+        flex-algo CHEAPBW level-2 advertised
+        flex-algo LOWLATENCY level-2 advertised
+  !
+  end
